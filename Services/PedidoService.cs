@@ -31,25 +31,24 @@ namespace EcommerceApi.Services
             return true;
         }
 
-        public Pedido Atualizar(Guid id, Pedido cli)
+        public Pedido Atualizar(Guid id, Pedido pedido)
         {
             var cliente = _pedidoService.SingleOrDefault(c => c.ID == id);
             int index = _pedidoService.IndexOf(cliente);
 
             _pedidoService.RemoveAt(index);
-            _pedidoService.Insert(index, cliente);
+            _pedidoService.Insert(index, pedido);
 
             return cliente;
         }
         public ItemPedido AdicionarItem(Guid idPedido, ItemPedido item)
         {
-            item.Pedido.ItensPedido.Add(item);
             var pedido = _pedidoService.SingleOrDefault(p => p.ID == idPedido);
-            pedido.ItensPedido.Add(item);
+            pedido.AdicionarItemPedido(item);
             CalcularValor(pedido);
             return item;
         }
-        public List<ItemPedido> BuscarItensPedidos(Guid idPedido)
+        public IEnumerable<ItemPedido> BuscarItensPedidos(Guid idPedido)
         {
             var pe = _pedidoService.SingleOrDefault(p => p.ID == idPedido);
             if (pe is not null) return pe.ItensPedido;
@@ -61,7 +60,7 @@ namespace EcommerceApi.Services
             int qtd = pe.ItensPedido.Count();
             if (pe is not null)
             {
-                pe.ItensPedido.Remove(item);
+                pe.Removerpedido(item);
                 CalcularValor(pe);
                 return qtd > pe.ItensPedido.Count() ? true : false;
             }
@@ -71,7 +70,7 @@ namespace EcommerceApi.Services
         {
             var pedido = _pedidoService.SingleOrDefault(p => p.ID == idPedido);
             int index = _pedidoService.IndexOf(pedido);
-            pedido.ItensPedido.Clear();
+            pedido.RemoverTodosItens();
             if (pedido.ItensPedido.Count == 0)
             {
                 _pedidoService[index] = pedido;
@@ -83,12 +82,12 @@ namespace EcommerceApi.Services
             }
         }
 
-        public ItemPedido AtualizarItemPedido(Guid id, ItemPedido itemPedido)
+        public ItemPedido AtualizarItemPedido(Guid id,Guid IdItem, ItemPedido itemPedido)
         {
-            var item = itemPedido.Pedido.ItensPedido.SingleOrDefault(p => p.ID == id);
-            int index = itemPedido.Pedido.ItensPedido.IndexOf(item);
-            itemPedido.Pedido.ItensPedido[index] = itemPedido;
+            var item = itemPedido.Pedido.ItensPedido.SingleOrDefault(p => p.ID == IdItem);
             var pedido = _pedidoService.SingleOrDefault(p => p.ID == id);
+            pedido.AtualizarItemPedido(IdItem, itemPedido);
+
             CalcularValor(pedido);
             return itemPedido;
         }

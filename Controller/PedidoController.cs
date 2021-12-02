@@ -21,11 +21,18 @@ namespace EcommerceApi.Controller
         {
             if (!pedidoDTO.Valido) return BadRequest();
 
-            var guid = Guid.NewGuid();
+
             var ped = new Pedido(
-                id: guid,
+                id: pedidoDTO.Id.Value,
                 name: pedidoDTO.Nome,
-                cliente: pedidoDTO.Cliente,
+                cliente: new Cliente(
+                    id: pedidoDTO.Cliente.Id.Value,
+                    nome: pedidoDTO.Cliente.Nome,
+                    sobrenome: pedidoDTO.Cliente.Sobrenome,
+                    documento: pedidoDTO.Cliente.Documento,
+                    idade: pedidoDTO.Cliente.Idade,
+                    e: pedidoDTO.Cliente.TipoPessoa)
+                ,
                 formaPagamento: pedidoDTO.FormaPagamento
                 );
 
@@ -59,25 +66,39 @@ namespace EcommerceApi.Controller
         {
             if (!pedidoDTO.Valido) return BadRequest();
 
-            var guid = Guid.NewGuid();
             var ped = new Pedido(
-                id: guid,
+                id: pedidoDTO.Id.Value,
                 name: pedidoDTO.Nome,
-                cliente: pedidoDTO.Cliente,
+                cliente: new Cliente(
+                    id: pedidoDTO.Cliente.Id.Value,
+                    nome: pedidoDTO.Cliente.Nome,
+                    sobrenome: pedidoDTO.Cliente.Sobrenome,
+                    documento: pedidoDTO.Cliente.Documento,
+                    idade: pedidoDTO.Cliente.Idade,
+                    e: pedidoDTO.Cliente.TipoPessoa)
+                ,
                 formaPagamento: pedidoDTO.FormaPagamento
                 );
 
             return Created("", _pedidoService.Atualizar(id, ped));
         }
-        [HttpPost, Route("{id}/{ItemPedidoDTO}")]
+        [HttpPost, Route("{idPedido}/ItemPedido")]
         public IActionResult AdicionarItemPedido(Guid idPedido, ItemPedidoDTO item)
         {
             if (!item.Valido) return BadRequest("As informações do pedido não estão corretas");
-            var guid = Guid.NewGuid();
+
             var itemPedido = new ItemPedido(
-                id: guid,
-                pedido: item.Pedido,
-                produto: item.Produto,
+                id: item.Id.Value,
+                pedido: new Pedido(
+                    id: item.Pedido.Id.Value,
+                    name: item.Pedido.Nome,
+                    cliente: new Cliente(),
+                    formaPagamento: item.Pedido.FormaPagamento),
+                produto: new Produto(
+                    id: item.Produto.Id.Value,
+                    nome: item.Produto.Nome,
+                    descricao: item.Produto.Descricao,
+                    preco: item.Produto.Preco),
                 qtd: item.QtdProdutos);
 
             return Ok(_pedidoService.AdicionarItem(idPedido, itemPedido));
@@ -87,7 +108,7 @@ namespace EcommerceApi.Controller
         {
             return Ok(_pedidoService.BuscarItensPedidos(idPedido));
         }
-        [HttpDelete, Route("id/ItemPedido/{id}")]
+        [HttpDelete, Route("{id}/ItemPedido")]
         public IActionResult RemoverTodosPedidos(Guid idPedido)
         {
             if (_pedidoService.EsvaziarCarrinho(idPedido))
@@ -95,29 +116,44 @@ namespace EcommerceApi.Controller
             else
                 return BadRequest("Não foi possivel executar a ação ");
         }
-        [HttpDelete, Route("{id}/ItemPedidoDTO")]
+        [HttpDelete, Route("{idPedido}/ItemPedido")]
         public IActionResult RemoverPed(ItemPedidoDTO item, Guid idPedido)
         {
-            var guid = Guid.NewGuid();
+           
             var itemPedido = new ItemPedido(
-                id: guid,
-                pedido: item.Pedido,
-                produto: item.Produto,
+                id: item.Id.Value,
+                pedido: new Pedido(
+                    id: item.Pedido.Id.Value,
+                    name: item.Pedido.Nome,
+                    cliente: new Cliente(),
+                    formaPagamento: item.Pedido.FormaPagamento),
+                produto: new Produto(
+                    id: item.Produto.Id.Value,
+                    nome: item.Produto.Nome,
+                    descricao: item.Produto.Descricao,
+                    preco: item.Produto.Preco),
                 qtd: item.QtdProdutos);
 
-            return Ok(_pedidoService.RemoverItemPedido(itemPedido,idPedido));
+            return Ok(_pedidoService.RemoverItemPedido(itemPedido, idPedido));
         }
-        [HttpPut, Route("{idPedido}/ItemPedido/")]
+        [HttpPut, Route("{idPedido}/ItemPedido")]
         public IActionResult AtualizarItemPed(ItemPedidoDTO item, Guid idPedido)
         {
-            var guid = Guid.NewGuid();
             var itemPedido = new ItemPedido(
-                id: guid,
-                pedido: item.Pedido,
-                produto: item.Produto,
+                id: item.Id.Value,
+                pedido: new Pedido(
+                    id: item.Pedido.Id.Value,
+                    name: item.Pedido.Nome,
+                    cliente: new Cliente(),
+                    formaPagamento: item.Pedido.FormaPagamento),
+                produto: new Produto(
+                    id: item.Produto.Id.Value,
+                    nome: item.Produto.Nome,
+                    descricao: item.Produto.Descricao,
+                    preco: item.Produto.Preco),
                 qtd: item.QtdProdutos);
-            
-            return Ok(_pedidoService.AtualizarItemPedido(idPedido,itemPedido));
+
+            return Ok(_pedidoService.AtualizarItemPedido(idPedido, itemPedido.ID,itemPedido));
         }
 
     }

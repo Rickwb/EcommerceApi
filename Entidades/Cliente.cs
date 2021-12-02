@@ -5,6 +5,7 @@ namespace EcommerceApi.Entidades
 {
     public class Cliente : EntidadeBase
     {
+        public Cliente() { }
         public Cliente(Guid id,
                        string nome,
                        string sobrenome,

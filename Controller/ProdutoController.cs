@@ -35,7 +35,7 @@ namespace EcommerceApi.Controller
         public IActionResult GetAll()
         {
 
-            return Ok(_produtoService.GetAll()) ;
+            return Ok(_produtoService.GetAll());
         }
 
         [HttpGet, Route("{id}")]
@@ -53,20 +53,19 @@ namespace EcommerceApi.Controller
             return BadRequest();
         }
 
-        [HttpPut,Route("{id}")]
+        [HttpPut, Route("{id}")]
         public IActionResult Atualizar(Guid id, ProdutoDTO produtoDTO)
         {
             if (!produtoDTO.Valido) return BadRequest();
 
-            var guid = Guid.NewGuid();
             var prod = new Produto(
-                id: guid,
+                id: produtoDTO.Id.Value,
                 nome: produtoDTO.Nome,
                 descricao: produtoDTO.Descricao,
                 preco: produtoDTO.Preco
                 );
 
-            return Created("", _produtoService.Atualizar(id,prod));
+            return Created("", _produtoService.Atualizar(id, prod));
         }
     }
 }

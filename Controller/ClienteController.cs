@@ -43,14 +43,14 @@ namespace EcommerceApi.Controller
 
             return Created("", _clienteService.Cadastrar(cliente));
         }
-        [HttpPut,Route("{id}")]
+        [HttpPut, Route("{id}")]
         public IActionResult Atualizar(Guid id, ClienteDTO cliDTO)
         {
             cliDTO.Validar();
             if (!cliDTO.Valido) return BadRequest("As informações do cliente estao invalidas");
 
             var cliente = new Cliente(
-                id: Guid.NewGuid(),
+                id: cliDTO.Id.Value,
                 nome: cliDTO.Nome,
                 sobrenome: cliDTO.Sobrenome,
                 idade: cliDTO.Idade,

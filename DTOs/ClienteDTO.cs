@@ -1,13 +1,12 @@
 ﻿using EcommerceApi.Entidades;
+using System;
 using static EcommerceApi.Enums.Enums;
 
 namespace EcommerceApi.DTOs
 {
     public class ClienteDTO : Validator
     {
-        public ClienteDTO() { }
-
-
+        public Guid? Id { get; set; }
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
         public string Documento { get; set; }

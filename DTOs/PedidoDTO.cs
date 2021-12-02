@@ -7,9 +7,10 @@ namespace EcommerceApi.DTOs
 {
     public class PedidoDTO : Validator
     {
+        public Guid? Id { get; set; }
         public string Nome { get; set; }
         public List<ItemPedido> ItensPedido { get; set; }
-        public Cliente Cliente { get; set; }
+        public ClienteDTO Cliente { get; set; }
         public FormaPagamento FormaPagamento { get; set; }
         public decimal ValorTotal { get; set; }
         public override void Validar()

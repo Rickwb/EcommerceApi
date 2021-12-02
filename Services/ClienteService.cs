@@ -13,7 +13,7 @@ namespace EcommerceApi.Services
         public ClienteService(PedidoService pedidoService)
         {
             _clienteService ??= new List<Cliente>();
-            _pedidoService=pedidoService;
+            _pedidoService = pedidoService;
         }
 
         public Cliente Get(Guid id) => _clienteService.Where(c => c.ID == id).SingleOrDefault();
