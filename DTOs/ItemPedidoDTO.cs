@@ -13,7 +13,6 @@ namespace EcommerceApi.DTOs
         {
             Valido = true;
             if (Produto is null) Valido = false;
-            if (Pedido is null) Valido = false;
             if (QtdProdutos <= 0) Valido = false;
 
         }
