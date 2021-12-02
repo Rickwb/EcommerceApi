@@ -18,6 +18,7 @@ namespace EcommerceApi.Controller
         [HttpPost]
         public IActionResult Cadastrar(ProdutoDTO produtoDTO)
         {
+            produtoDTO.Validar();
             if (!produtoDTO.Valido) return BadRequest();
 
             var guid = Guid.NewGuid();

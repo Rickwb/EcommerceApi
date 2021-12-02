@@ -11,6 +11,7 @@ namespace EcommerceApi.DTOs
         public string Nome { get; set; }
         public string Descricao { get; set; }
         public decimal Preco { get; set; }
+        
         public override void Validar()
         {
             Valido = true;
