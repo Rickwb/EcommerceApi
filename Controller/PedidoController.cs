@@ -69,8 +69,8 @@ namespace EcommerceApi.Controller
 
             return Created("", _pedidoService.Atualizar(id, ped));
         }
-        [HttpPost, Route("ItemPedido")]
-        public IActionResult AdicionarItemPedido(ItemPedidoDTO item)
+        [HttpPost, Route("{id}/ItemPedido")]
+        public IActionResult AdicionarItemPedido(Guid idPedido,ItemPedidoDTO item)
         {
             if (!item.Valido) return BadRequest("As informações do pedido não estão corretas");
             var guid = Guid.NewGuid();
@@ -79,14 +79,18 @@ namespace EcommerceApi.Controller
                 pedido: item.Pedido,
                 produto: item.Produto,
                 qtd: item.QtdProdutos);
-            return Ok(_pedidoService.AdicionarItem(itemPedido));
+            var pedido=_pedidoService.Get(idPedido);
+            pedido.ItensPedido.Add(itemPedido);
+            CalcularValor(pedido);
+
+            return Ok(_pedidoService.Atualizar(idPedido,pedido));
         }
-        [HttpGet, Route("/ItemPedido/{id}")]
-        public IActionResult BuscarItensPed(Guid id)
+        [HttpGet, Route("{id}/ItemPedido/{id}")]
+        public IActionResult BuscarItensPed(Guid idPedido)
         {
-            return Ok(_pedidoService.BuscarItensPedidos(id));
+            return Ok(_pedidoService.BuscarItensPedidos(idPedido));
         }
-        [HttpDelete,Route("/ItensPedido/{id}")]
+        [HttpDelete,Route("{id}/ItemPedido")]
         public IActionResult RemoverTodosPedidos(Guid idPedido)
         {
             if (_pedidoService.EsvaziarCarrinho(idPedido))
@@ -94,8 +98,8 @@ namespace EcommerceApi.Controller
             else
                 return BadRequest("Não foi possivel executar a ação ");
         }
-        [HttpDelete, Route("/ItemPedido/{Id}")]
-        public IActionResult RemoverPed(ItemPedidoDTO item,Guid id)
+        [HttpDelete, Route("{id}/ItemPedido/{Id}")]
+        public IActionResult RemoverPed(ItemPedidoDTO item,Guid idPedido)
         {
             var guid = Guid.NewGuid();
             var itemPedido = new ItemPedido(
@@ -103,10 +107,12 @@ namespace EcommerceApi.Controller
                 pedido: item.Pedido,
                 produto: item.Produto,
                 qtd: item.QtdProdutos);
-            return Ok(_pedidoService.RemoverItemPedido(itemPedido, id));
+            _pedidoService.RemoverItemPedido(itemPedido, idPedido);
+            CalcularValor(_pedidoService.Get(idPedido));
+            return Ok(_pedidoService.Atualizar());
         }
-        [HttpPut, Route("/")]
-        public IActionResult AtualizarItemPed(ItemPedidoDTO item,Guid id)
+        [HttpPut, Route("{id}/")]
+        public IActionResult AtualizarItemPed(ItemPedidoDTO item,Guid idPedido)
         {
             var guid = Guid.NewGuid();
             var itemPedido = new ItemPedido(
@@ -114,7 +120,20 @@ namespace EcommerceApi.Controller
                 pedido: item.Pedido,
                 produto: item.Produto,
                 qtd: item.QtdProdutos);
-            return Ok(_pedidoService.AtualizarItemPedido(id,itemPedido));
+            _pedidoService.AtualizarItemPedido(idPedido, itemPedido);
+            var pedido = _pedidoService.Get(idPedido);
+            CalcularValor(pedido);
+            return Ok(_pedidoService.Atualizar(idPedido,pedido));
+        }
+
+        public static Pedido CalcularValor(Pedido pe)
+        {
+            pe.ValorTotal = 0;
+            foreach (var item in pe.ItensPedido)
+            {
+                pe.ValorTotal += item.Produto.Preco * item.QtdProdutos;
+            }
+            return pe;
         }
 
     }

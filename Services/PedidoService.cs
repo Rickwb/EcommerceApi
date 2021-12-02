@@ -48,9 +48,9 @@ namespace EcommerceApi.Services
             return null;
         }
         //public void RemoverItemPedido(ItemPedido item, Pedido pe) => pe.ItensPedido.Remove(item);
-        public bool RemoverItemPedido(ItemPedido item, Guid id)
+        public bool RemoverItemPedido(ItemPedido item, Guid idPedido)
         {
-            var pe = _pedidoService.SingleOrDefault(p => p.ID == id);
+            var pe = _pedidoService.SingleOrDefault(p => p.ID == idPedido);
             int qtd= pe.ItensPedido.Count();
             if (pe is not null)
             {
@@ -59,9 +59,9 @@ namespace EcommerceApi.Services
             }
             return false;
         }
-        public bool EsvaziarCarrinho(Guid id)
+        public bool EsvaziarCarrinho(Guid idPedido)
         {
-            var pedido = _pedidoService.SingleOrDefault(p => p.ID == id);
+            var pedido = _pedidoService.SingleOrDefault(p => p.ID == idPedido);
             int index = _pedidoService.IndexOf(pedido);
             pedido.ItensPedido.Clear();
             if (pedido.ItensPedido.Count == 0)
