@@ -9,18 +9,23 @@ namespace EcommerceApi.Services
     {
 
         private readonly List<Cliente> _clienteService;
-
-        public ClienteService()
+        private readonly PedidoService _pedidoService;
+        public ClienteService(PedidoService pedidoService)
         {
             _clienteService ??= new List<Cliente>();
+            _pedidoService=pedidoService;
         }
 
         public Cliente Get(Guid id) => _clienteService.Where(c => c.ID == id).SingleOrDefault();
-        public IEnumerable<Cliente> GetAll() => _clienteService;
+        public IEnumerable<Cliente> GetAll()
+        {
+            return _clienteService;
+        }
 
         public Cliente Cadastrar(Cliente cli)
         {
             _clienteService.Add(cli);
+            _pedidoService.Cadastrar(cli.Pedido);
             return cli;
         }
 
@@ -29,6 +34,7 @@ namespace EcommerceApi.Services
             var cliente = _clienteService.SingleOrDefault(c => c.ID == id);
             if (cliente == null) return false;
             _clienteService.Remove(cliente);
+            _pedidoService.Deletar(cliente.Pedido.ID);
             return true;
         }
 
@@ -37,13 +43,22 @@ namespace EcommerceApi.Services
             var cliente = _clienteService.SingleOrDefault(c => c.ID == id);
             int index = _clienteService.IndexOf(cliente);
 
+            if (cliente.Pedido.Equals(cli.Pedido))
+                _pedidoService.Atualizar(cliente.Pedido.ID, cli.Pedido);
+
             _clienteService.RemoveAt(index);
             _clienteService.Insert(index, cliente);
 
             return cliente;
         }
 
-
-
+        public bool Pagar(Pedido pedido)
+        {
+            return true;
+        }
+        public bool Pagar(Guid idPedido)
+        {
+            return true;
+        }
     }
 }

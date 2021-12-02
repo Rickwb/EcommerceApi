@@ -5,6 +5,10 @@ namespace EcommerceApi.Entidades
 {
     public class Pedido : EntidadeBase
     {
+        public Pedido()
+        {
+            
+        }
         public Pedido(Guid id,string name, Cliente cliente,FormaPagamento formaPagamento) : base(id)
         {
             Nome = name;

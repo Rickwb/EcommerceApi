@@ -21,8 +21,8 @@ namespace EcommerceApi.DTOs
                 Valido = false;
             if (ItensPedido.Count==0)
                 Valido=false;
-
-
         }
+
+      
     }
 }

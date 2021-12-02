@@ -10,9 +10,9 @@ namespace EcommerceApi.Controller
     public class ClienteController : ControllerBase
     {
         private readonly ClienteService _clienteService;
-        public ClienteController()
+        public ClienteController(ClienteService clienteService)
         {
-            _clienteService = new ClienteService();
+            _clienteService = clienteService;
         }
 
         [HttpGet]

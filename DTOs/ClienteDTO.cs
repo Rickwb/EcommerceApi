@@ -23,7 +23,8 @@ namespace EcommerceApi.DTOs
                 Valido=ValidarCnpj(Documento);
             if (TipoPessoa==ETipoPessoa.PessoaFisica)
                 Valido=ValidarCpf(Documento);
-            if (Idade < 18) Valido = false;
+            if (Idade < 18) 
+                Valido = false;
 
         }
         public bool ValidarCpf(string documento)

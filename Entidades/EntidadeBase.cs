@@ -8,6 +8,10 @@ namespace EcommerceApi.Entidades
         {
             ID = id;
         }
+        protected EntidadeBase()
+        {
+            ID= Guid.NewGuid();
+        }
         public Guid ID { get; private set; }
     }
 }

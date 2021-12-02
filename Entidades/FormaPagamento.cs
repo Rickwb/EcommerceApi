@@ -9,13 +9,13 @@ namespace EcommerceApi.Entidades
         {
             Valor = valor;
         }
-        protected decimal Valor { get; private set; }
+        public decimal Valor { get; protected set; }
         protected DateTime DataPagamento { get; private set; }
 
         protected bool PagamentoConcluido { get; private set; }
-        public bool Valido { get; protected set; }
+        public bool Valido { get;  set; }
 
-        public Epagamento TipoPagamento { get; init; }
+        public Epagamento TipoPagamento { get; set; }
 
        
     }

@@ -2,13 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static EcommerceApi.Enums.Enums;
 
 namespace EcommerceApi.Services
 {
     public class PedidoService
     {
         private readonly List<Pedido> _pedidoService;
-
+        private readonly ClienteService _clienteService;
+        public PedidoService()
+        {
+            _pedidoService ??= new List<Pedido>();
+        }
         public Entidades.Pedido Get(Guid id) => _pedidoService.Where(c => c.ID == id).SingleOrDefault();
         public IEnumerable<Pedido> GetAll() => _pedidoService;
 
@@ -36,9 +41,12 @@ namespace EcommerceApi.Services
 
             return cliente;
         }
-        public ItemPedido AdicionarItem(ItemPedido item)
+        public ItemPedido AdicionarItem(Guid idPedido, ItemPedido item)
         {
             item.Pedido.ItensPedido.Add(item);
+            var pedido = _pedidoService.SingleOrDefault(p => p.ID == idPedido);
+            pedido.ItensPedido.Add(item);
+            CalcularValor(pedido);
             return item;
         }
         public List<ItemPedido> BuscarItensPedidos(Guid idPedido)
@@ -47,15 +55,15 @@ namespace EcommerceApi.Services
             if (pe is not null) return pe.ItensPedido;
             return null;
         }
-        //public void RemoverItemPedido(ItemPedido item, Pedido pe) => pe.ItensPedido.Remove(item);
         public bool RemoverItemPedido(ItemPedido item, Guid idPedido)
         {
             var pe = _pedidoService.SingleOrDefault(p => p.ID == idPedido);
-            int qtd= pe.ItensPedido.Count();
+            int qtd = pe.ItensPedido.Count();
             if (pe is not null)
             {
                 pe.ItensPedido.Remove(item);
-                return qtd>pe.ItensPedido.Count()?true:false;
+                CalcularValor(pe);
+                return qtd > pe.ItensPedido.Count() ? true : false;
             }
             return false;
         }
@@ -80,7 +88,180 @@ namespace EcommerceApi.Services
             var item = itemPedido.Pedido.ItensPedido.SingleOrDefault(p => p.ID == id);
             int index = itemPedido.Pedido.ItensPedido.IndexOf(item);
             itemPedido.Pedido.ItensPedido[index] = itemPedido;
+            var pedido = _pedidoService.SingleOrDefault(p => p.ID == id);
+            CalcularValor(pedido);
             return itemPedido;
+        }
+        public static Pedido CalcularValor(Pedido pe)
+        {
+            pe.ValorTotal = 0;
+            foreach (var item in pe.ItensPedido)
+            {
+                pe.ValorTotal += item.Produto.Preco * item.QtdProdutos;
+            }
+            return pe;
+        }
+
+        public bool FinalizarPedido(Pedido pedido, FormaPagamento formaPagamento)
+        {
+            pedido.FormaPagamento = formaPagamento;
+            ValidarFormaDePagamento(formaPagamento);
+
+            _pedidoService.Remove(pedido);
+            return true;
+        }
+        public bool ValidarFormaDePagamento(FormaPagamento formaPagamento)
+        {
+            switch (formaPagamento.TipoPagamento)
+            {
+                case Enums.Enums.Epagamento.Pix:
+                    ValidarPix((Pix)formaPagamento);
+                    return true;
+                    break;
+                case Enums.Enums.Epagamento.Boleto:
+                    ValidarBoleto((Boleto)formaPagamento);
+                    return true;
+                    break;
+                case Enums.Enums.Epagamento.CartaoDebito:
+                    ValidarCartaoDebito((CartaoDebito)formaPagamento);
+                    return true;
+                    break;
+                case Enums.Enums.Epagamento.CartaoCredito:
+                    ValidarCartaoCredito((CartaoCredito)formaPagamento);
+                    return true;
+                    break;
+            }
+            return false;
+        }
+
+        private bool ValidarCartaoCredito(CartaoCredito cartaoCredito)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(cartaoCredito.NumBanco) || string.IsNullOrEmpty(cartaoCredito.Agencia) || string.IsNullOrEmpty(cartaoCredito.Conta) || cartaoCredito.CVV == 0 || cartaoCredito.Limite == 0)
+                {
+                    throw new ArgumentNullException("Campos");
+                }
+                if (cartaoCredito.Agencia.Length != 5 || cartaoCredito.Conta.Length != 6 || cartaoCredito.DataValidade < DateTime.Today)
+                {
+                    throw new ArgumentOutOfRangeException("Valores invalidos");
+                }
+                if ((cartaoCredito.Valor != 0 && cartaoCredito.Valor > cartaoCredito.Limite) || cartaoCredito.Valor == 0)
+                {
+                    throw new ArgumentOutOfRangeException("VALOR Maior que o limite");
+                }
+                cartaoCredito.Valido = true;
+                return true;
+            }
+            catch (ArgumentOutOfRangeException a)
+            {
+                cartaoCredito.Valido = true;
+                return false;
+            }
+            catch (ArgumentNullException e)
+            {
+                cartaoCredito.Valido = true;
+                return false;
+
+            }
+        }
+
+        private bool ValidarCartaoDebito(CartaoDebito cartaoDebito)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(cartaoDebito.NumBanco) || string.IsNullOrEmpty(cartaoDebito.Agencia) || string.IsNullOrEmpty(cartaoDebito.Conta) || cartaoDebito.CVV == 0 || cartaoDebito.Limite == 0)
+                {
+                    throw new ArgumentNullException("Campos");
+                }
+                if (cartaoDebito.Agencia.Length != 5 || cartaoDebito.Conta.Length != 6 || cartaoDebito.DataValidade < DateTime.Today)
+                {
+                    throw new ArgumentOutOfRangeException("Valores invalidos");
+                }
+                if ((cartaoDebito.Valor != 0 && cartaoDebito.Valor > cartaoDebito.Limite) || cartaoDebito.Valor == 0)
+                {
+                    throw new ArgumentOutOfRangeException("VALOR Maior que o limite");
+                }
+                cartaoDebito.Valido = true;
+                return true;
+            }
+            catch (ArgumentOutOfRangeException a)
+            {
+                cartaoDebito.Valido = true;
+                return false;
+            }
+            catch (ArgumentNullException e)
+            {
+                cartaoDebito.Valido = true;
+                return false;
+
+            }
+        }
+
+        private bool ValidarBoleto(Boleto boleto)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(boleto.NumBanco) || string.IsNullOrEmpty(boleto.Agencia) || string.IsNullOrEmpty(boleto.Benefinciario)
+                    || boleto.Vencimento == DateTime.MinValue || String.IsNullOrEmpty(boleto.NumDocumento) || boleto.Valor == 0)
+                {
+                    throw new ArgumentNullException("Campos");
+                }
+                if (boleto.Vencimento < DateTime.Today)
+                {
+                    throw new ArgumentOutOfRangeException("A não é possivel criar um boleto com o vencimento anterior ao dia atual");
+                }
+                boleto.Valido = true;
+                return true;
+            }
+            catch (ArgumentNullException a)
+            {
+                boleto.Valido = false;
+                return false;
+            }
+            catch (ArgumentOutOfRangeException a)
+            {
+                boleto.Valido = false;
+                return false;
+            }
+        }
+
+        private bool ValidarPix(Pix pix)
+        {
+            try
+            {
+
+                if (Enum.IsDefined(pix.TipoChave) || String.IsNullOrEmpty(pix.Chave))
+                {
+                    throw new ArgumentNullException();
+                }
+                if (pix.TipoChave == PixType.Telefone && pix.Chave.Any(x => char.IsLetter(x)))
+                {
+                    throw new ArgumentException("O telfone não pode conter letras");
+                }
+                if (pix.TipoChave == PixType.Email && !pix.Chave.Contains("@"))
+                {
+                    throw new ArgumentException("O email não foi informado corretamente");
+                }
+                if (pix.TipoChave == PixType.Cpf)
+                {
+                    pix.Chave = pix.Chave.Trim().Replace(".", "").Replace("-", "");
+                    if (pix.Chave.Length != 11)
+                        throw new ArgumentException("O Cpf foi informado incorretamente");
+                }
+                pix.Valido = true;
+                return true;
+            }
+            catch (ArgumentNullException a)
+            {
+                pix.Valido = false;
+                return false;
+            }
+            catch (ArgumentException x)
+            {
+                pix.Valido = false;
+                return false;
+            }
         }
     }
 }
