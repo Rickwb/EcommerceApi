@@ -21,7 +21,7 @@ namespace EcommerceApi.Controller
         {
             if (!pedidoDTO.Valido) return BadRequest();
 
-
+            pedidoDTO.Validar();
             var ped = new Pedido(
                 id: pedidoDTO.Id.Value,
                 name: pedidoDTO.Nome,
@@ -64,6 +64,7 @@ namespace EcommerceApi.Controller
         [HttpPut, Route("{id}")]
         public IActionResult Atualizar(Guid id, PedidoDTO pedidoDTO)
         {
+            pedidoDTO.Validar();
             if (!pedidoDTO.Valido) return BadRequest();
 
             var ped = new Pedido(
@@ -85,6 +86,7 @@ namespace EcommerceApi.Controller
         [HttpPost, Route("{idPedido}/ItemPedido")]
         public IActionResult AdicionarItemPedido(Guid idPedido, ItemPedidoDTO item)
         {
+            item.Validar();
             if (!item.Valido) return BadRequest("As informações do pedido não estão corretas");
 
             var itemPedido = new ItemPedido(
@@ -119,7 +121,7 @@ namespace EcommerceApi.Controller
         [HttpDelete, Route("{idPedido}/ItemPedido")]
         public IActionResult RemoverPed(ItemPedidoDTO item, Guid idPedido)
         {
-           
+            item.Validar();
             var itemPedido = new ItemPedido(
                 id: item.Id.Value,
                 pedido: new Pedido(
@@ -139,6 +141,7 @@ namespace EcommerceApi.Controller
         [HttpPut, Route("{idPedido}/ItemPedido")]
         public IActionResult AtualizarItemPed(ItemPedidoDTO item, Guid idPedido)
         {
+            item.Validar();
             var itemPedido = new ItemPedido(
                 id: item.Id.Value,
                 pedido: new Pedido(

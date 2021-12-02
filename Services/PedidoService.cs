@@ -84,6 +84,7 @@ namespace EcommerceApi.Services
 
         public ItemPedido AtualizarItemPedido(Guid id,Guid IdItem, ItemPedido itemPedido)
         {
+            
             var item = itemPedido.Pedido.ItensPedido.SingleOrDefault(p => p.ID == IdItem);
             var pedido = _pedidoService.SingleOrDefault(p => p.ID == id);
             pedido.AtualizarItemPedido(IdItem, itemPedido);

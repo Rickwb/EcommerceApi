@@ -57,6 +57,7 @@ namespace EcommerceApi.Controller
         [HttpPut, Route("{id}")]
         public IActionResult Atualizar(Guid id, ProdutoDTO produtoDTO)
         {
+            produtoDTO.Validar();
             if (!produtoDTO.Valido) return BadRequest();
 
             var prod = new Produto(
