@@ -11,9 +11,8 @@ namespace EcommerceApi.Entidades
         {
 
         }
-        public Pedido(Guid id, string name, Cliente cliente) : base(id)
+        public Pedido(Guid id, Cliente cliente) : base(id)
         {
-            Nome = name;
             Cliente = cliente;
             _itensPedidos = new List<ItemPedido>();
         }
@@ -35,7 +34,7 @@ namespace EcommerceApi.Entidades
         }
         public void Removerpedido(ItemPedido itemPedido)
         {
-            _itensPedidos.Remove(itemPedido);
+            _itensPedidos.Remove(_itensPedidos.SingleOrDefault(x=>x.ID==itemPedido.ID));
         }
         public void AtualizarItemPedido(Guid idItem,ItemPedido itemPedido)
         {

@@ -24,7 +24,6 @@ namespace EcommerceApi.Controller
             pedidoDTO.Validar();
             var ped = new Pedido(
                 id: pedidoDTO.Id.Value,
-                name: pedidoDTO.Nome,
                 cliente: new Cliente(
                     id: pedidoDTO.Cliente.Id.Value,
                     nome: pedidoDTO.Cliente.Nome,
@@ -67,7 +66,6 @@ namespace EcommerceApi.Controller
 
             var ped = new Pedido(
                 id: pedidoDTO.Id.Value,
-                name: pedidoDTO.Nome,
                 cliente: new Cliente(
                     id: pedidoDTO.Cliente.Id.Value,
                     nome: pedidoDTO.Cliente.Nome,
@@ -102,8 +100,8 @@ namespace EcommerceApi.Controller
         {
             return Ok(_pedidoService.BuscarItensPedidos(idPedido));
         }
-        [HttpDelete, Route("{id}/ItemPedido")]
-        public IActionResult RemoverTodosPedidos(Guid idPedido)
+        [HttpDelete, Route("{id}/Limpar")]
+        public IActionResult LimparCarinho(Guid idPedido)
         {
             if (_pedidoService.EsvaziarCarrinho(idPedido))
                 return NoContent();

@@ -32,7 +32,7 @@ namespace EcommerceApi.Entidades
             Nome = nome;
             Sobrenome = sobrenome;
             Documento = documento;
-            Pedido ??= new Pedido();
+            Pedido ??= new Pedido(Guid.NewGuid(),this);
             Idade = idade;
             TipoPessoa = e;
         }
