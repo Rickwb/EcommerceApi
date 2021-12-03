@@ -136,7 +136,7 @@ namespace EcommerceApi.Controller
                     preco: item.Produto.Preco),
                 qtd: item.QtdProdutos);
 
-            return Ok(_pedidoService.AtualizarItemPedido(idPedido, itemPedido.ID, itemPedido));
+            return Ok(_pedidoService.AtualizarItemPedido(idPedido, itemPedido));
         }
 
         [HttpPost, Route("{idPedido}/Formapagamento")]
