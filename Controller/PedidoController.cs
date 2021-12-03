@@ -87,10 +87,7 @@ namespace EcommerceApi.Controller
 
             var itemPedido = new ItemPedido(
                 id: item.Id.Value,
-                pedido: new Pedido(
-                    id: item.Pedido.Id.Value,
-                    name: item.Pedido.Nome,
-                    cliente: new Cliente()),
+                
                 produto: new Produto(
                     id: item.Produto.Id.Value,
                     nome: item.Produto.Nome,
@@ -119,10 +116,6 @@ namespace EcommerceApi.Controller
             item.Validar();
             var itemPedido = new ItemPedido(
                 id: item.Id.Value,
-                pedido: new Pedido(
-                    id: item.Pedido.Id.Value,
-                    name: item.Pedido.Nome,
-                    cliente: new Cliente()),
                 produto: new Produto(
                     id: item.Produto.Id.Value,
                     nome: item.Produto.Nome,
@@ -138,10 +131,6 @@ namespace EcommerceApi.Controller
             item.Validar();
             var itemPedido = new ItemPedido(
                 id: item.Id.Value,
-                pedido: new Pedido(
-                    id: item.Pedido.Id.Value,
-                    name: item.Pedido.Nome,
-                    cliente: new Cliente()),
                 produto: new Produto(
                     id: item.Produto.Id.Value,
                     nome: item.Produto.Nome,

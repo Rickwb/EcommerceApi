@@ -32,7 +32,7 @@ namespace EcommerceApi.Services
         public Produto Atualizar(Guid id,Produto prop)
         {
             var prod=_produtoService.Where(p => p.ID == id).SingleOrDefault();
-            int index = _produtoService.IndexOf(prop);
+            int index = _produtoService.IndexOf(prod);
             _produtoService.Remove(prod);
             _produtoService.Insert(index, prop);
             return prop;

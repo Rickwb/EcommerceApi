@@ -15,7 +15,7 @@ namespace EcommerceApi.Entidades
         {
             Nome = name;
             Cliente = cliente;
-            _itensPedidos ??= new List<ItemPedido>();
+            _itensPedidos = new List<ItemPedido>();
         }
         public string Nome { get; set; }
         public IReadOnlyList<ItemPedido> ItensPedido => _itensPedidos;
