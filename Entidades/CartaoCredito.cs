@@ -5,7 +5,7 @@ namespace EcommerceApi.Entidades
 {
     public class CartaoCredito : FormaPagamento
     {
-        public CartaoCredito(decimal valor, DateTime date, string numCartao, string Conta, string Agencia, string Marca, string CVV) : base(valor)
+        public CartaoCredito(decimal valor, string numCartao, string CVV) : base(valor)
         {
             TipoPagamento = Epagamento.CartaoCredito;
         }

@@ -102,12 +102,13 @@ namespace EcommerceApi.Services
             return pe;
         }
 
-        public bool FinalizarPedido(Pedido pedido, FormaPagamento formaPagamento)
+        public bool FinalizarPedido(Guid idPedido, FormaPagamento formaPagamento)
         {
+            var pedido = _pedidoService.SingleOrDefault(p => p.ID == idPedido);
+            //ValidarFormaDePagamento(formaPagamento);
             pedido.FormaPagamento = formaPagamento;
-            ValidarFormaDePagamento(formaPagamento);
 
-            _pedidoService.Remove(pedido);
+            pedido.DefinirPago();
             return true;
         }
         public bool ValidarFormaDePagamento(FormaPagamento formaPagamento)

@@ -11,17 +11,12 @@ namespace EcommerceApi.DTOs
         public string Nome { get; set; }
         public List<ItemPedido> ItensPedido { get; set; }
         public ClienteDTO Cliente { get; set; }
-        public FormaPagamento FormaPagamento { get; set; }
         public decimal ValorTotal { get; set; }
         public override void Validar()
         {
             Valido = true;
             if (String.IsNullOrEmpty(Nome) || Nome.Length > 150)
                 Valido = false;
-            if (Cliente is null)
-                Valido = false;
-            if (ItensPedido.Count==0)
-                Valido=false;
         }
 
       

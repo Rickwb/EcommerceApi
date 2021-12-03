@@ -32,8 +32,6 @@ namespace EcommerceApi.Controller
                     documento: pedidoDTO.Cliente.Documento,
                     idade: pedidoDTO.Cliente.Idade,
                     e: pedidoDTO.Cliente.TipoPessoa)
-                ,
-                formaPagamento: pedidoDTO.FormaPagamento
                 );
 
             return Created("", _pedidoService.Cadastrar(ped));
@@ -77,8 +75,6 @@ namespace EcommerceApi.Controller
                     documento: pedidoDTO.Cliente.Documento,
                     idade: pedidoDTO.Cliente.Idade,
                     e: pedidoDTO.Cliente.TipoPessoa)
-                ,
-                formaPagamento: pedidoDTO.FormaPagamento
                 );
 
             return Created("", _pedidoService.Atualizar(id, ped));
@@ -94,8 +90,7 @@ namespace EcommerceApi.Controller
                 pedido: new Pedido(
                     id: item.Pedido.Id.Value,
                     name: item.Pedido.Nome,
-                    cliente: new Cliente(),
-                    formaPagamento: item.Pedido.FormaPagamento),
+                    cliente: new Cliente()),
                 produto: new Produto(
                     id: item.Produto.Id.Value,
                     nome: item.Produto.Nome,
@@ -127,8 +122,7 @@ namespace EcommerceApi.Controller
                 pedido: new Pedido(
                     id: item.Pedido.Id.Value,
                     name: item.Pedido.Nome,
-                    cliente: new Cliente(),
-                    formaPagamento: item.Pedido.FormaPagamento),
+                    cliente: new Cliente()),
                 produto: new Produto(
                     id: item.Produto.Id.Value,
                     nome: item.Produto.Nome,
@@ -147,8 +141,7 @@ namespace EcommerceApi.Controller
                 pedido: new Pedido(
                     id: item.Pedido.Id.Value,
                     name: item.Pedido.Nome,
-                    cliente: new Cliente(),
-                    formaPagamento: item.Pedido.FormaPagamento),
+                    cliente: new Cliente()),
                 produto: new Produto(
                     id: item.Produto.Id.Value,
                     nome: item.Produto.Nome,
@@ -156,7 +149,44 @@ namespace EcommerceApi.Controller
                     preco: item.Produto.Preco),
                 qtd: item.QtdProdutos);
 
-            return Ok(_pedidoService.AtualizarItemPedido(idPedido, itemPedido.ID,itemPedido));
+            return Ok(_pedidoService.AtualizarItemPedido(idPedido, itemPedido.ID, itemPedido));
+        }
+
+        [HttpPost, Route("{idPedido}/Formapagamento")]
+        public IActionResult FinalizarPedido(Guid idPedido, FinalizarPagamentoDTO finalizarPagamento)
+        {
+            if (finalizarPagamento.FormaPagamento== Enums.Enums.Epagamento.Pix)
+            {
+                var px = new Pix(
+                    valor: finalizarPagamento.Valor,
+                    chave: finalizarPagamento.Pix.Chave
+                    );
+                return Ok(_pedidoService.FinalizarPedido(idPedido,px));
+            }
+            if (finalizarPagamento.FormaPagamento == Enums.Enums.Epagamento.CartaoCredito)
+            {
+                var cardCredito = new CartaoCredito(
+                    valor: finalizarPagamento.Valor,
+                    numCartao: finalizarPagamento.CartaoCredito.NumCartao,
+                    CVV: finalizarPagamento.CartaoCredito.CVV
+                    );
+                return Ok(_pedidoService.FinalizarPedido(idPedido, cardCredito));
+
+            }
+            if (finalizarPagamento.FormaPagamento == Enums.Enums.Epagamento.CartaoDebito)
+            {
+                var cartaoDebito = new CartaoDebito(
+                    valor: finalizarPagamento.Valor);
+                return Ok(_pedidoService.FinalizarPedido(idPedido, cartaoDebito));
+            }
+            if (finalizarPagamento.FormaPagamento== Enums.Enums.Epagamento.Boleto)
+            {
+                var Boleto = new Boleto(
+                    valor: finalizarPagamento.Valor);
+                return Ok(_pedidoService.FinalizarPedido(idPedido, Boleto));
+            }
+
+            return BadRequest();
         }
 
     }

@@ -4,7 +4,7 @@ namespace EcommerceApi.Entidades
 {
     public class Pix:FormaPagamento
     {
-        public Pix(decimal valor) : base(valor)
+        public Pix(decimal valor,string chave) : base(valor)
         {
             TipoPagamento = Epagamento.Pix;
         }

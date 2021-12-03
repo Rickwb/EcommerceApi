@@ -11,12 +11,11 @@ namespace EcommerceApi.Entidades
         {
 
         }
-        public Pedido(Guid id, string name, Cliente cliente, FormaPagamento formaPagamento) : base(id)
+        public Pedido(Guid id, string name, Cliente cliente) : base(id)
         {
             Nome = name;
             Cliente = cliente;
             _itensPedidos ??= new List<ItemPedido>();
-            FormaPagamento = formaPagamento;
         }
         public string Nome { get; set; }
         public IReadOnlyList<ItemPedido> ItensPedido => _itensPedidos;
@@ -24,7 +23,12 @@ namespace EcommerceApi.Entidades
         public Cliente Cliente { get; set; }
         public decimal ValorTotal { get; set; }
 
+        private bool Pago { get; set; }
 
+        public void DefinirPago()
+        {
+            Pago = true;
+        }
         public void AdicionarItemPedido(ItemPedido itemPedido)
         {
             _itensPedidos.Add(itemPedido);

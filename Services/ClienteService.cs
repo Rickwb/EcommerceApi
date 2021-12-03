@@ -47,9 +47,9 @@ namespace EcommerceApi.Services
                 _pedidoService.Atualizar(cliente.Pedido.ID, cli.Pedido);
 
             _clienteService.RemoveAt(index);
-            _clienteService.Insert(index, cliente);
+            _clienteService.Insert(index, cli);
 
-            return cliente;
+            return cli;
         }
 
         public bool Pagar(Pedido pedido)
