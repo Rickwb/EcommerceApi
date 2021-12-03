@@ -85,9 +85,9 @@ namespace EcommerceApi.Services
         public ItemPedido AtualizarItemPedido(Guid id, ItemPedido itemPedido)
         {
 
-            var item = itemPedido.Pedido.ItensPedido.SingleOrDefault(p => p.ID == itemPedido.ID) ;
             var pedido = _pedidoService.SingleOrDefault(p => p.ID == id);
-            pedido.AtualizarItemPedido(itemPedido.ID, itemPedido);
+            var item = pedido.ItensPedido.SingleOrDefault(p => p.ID == itemPedido.ID) ;
+            pedido.AtualizarItemPedido(item.ID, itemPedido);
 
             CalcularValor(pedido);
             return itemPedido;
